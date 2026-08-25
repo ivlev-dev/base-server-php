@@ -9,6 +9,7 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
         libc-dev \
         make \
         pkg-config \
+        libzip-dev \
         re2c \
         git \
         libssl-dev \
@@ -20,6 +21,7 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
         linux-libc-dev
 
 RUN docker-php-ext-install sockets
+RUN docker-php-ext-install zip
 
 RUN git clone https://github.com/openswoole/ext-openswoole.git && \
     cd ext-openswoole && \
@@ -52,5 +54,7 @@ COPY --from=builder /usr/local/lib/php/extensions/ /usr/local/lib/php/extensions
 
 RUN echo "extension=sockets.so" > /usr/local/etc/php/conf.d/10-sockets.ini && \
     echo "extension=openswoole.so" > /usr/local/etc/php/conf.d/20-openswoole.ini
+
+RUN docker-php-ext-enable zip
 
 COPY --from=composer:2.10.2 /usr/bin/composer /usr/local/bin/composer
